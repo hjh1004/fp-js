@@ -12,9 +12,9 @@
       function f1(limit, list) {
         let acc = 0;
         let count = 0;
-        for (const item of list) {
-          if (item % 2 === 1) {
-            const b = item * item;
+        for (const a of list) {
+          if (a % 2 === 1) {
+            const b = a * a;
             acc += b;
             if (++count === limit) break;
           }
@@ -24,7 +24,105 @@
       f1(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     </script>
 
-    2. if를 filter로 3. 값 변화 후 변수 할당을 map으로 4. break를 take로 5. 축약
-    및 합산을 reduce로
+    2. if를 filter로
+    <script>
+      function f2(limit, list) {
+        let acc = 0;
+        let count = 0;
+        for (const a of L.filter((a) => a % 2, list)) {
+          const b = a * a;
+          acc += b;
+          if (++count === limit) break;
+        }
+        console.log(acc);
+      }
+      f2(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
+    3. 값 변화 후 변수 할당을 map으로
+    <script>
+      function f3(limit, list) {
+        let acc = 0;
+        let count = 0;
+        for (const a of L.map(
+          (a) => a * a,
+          L.filter((a) => a % 2, list)
+        )) {
+          acc += a;
+          if (++count === limit) break;
+        }
+        console.log(acc);
+      }
+      f3(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
+    4. break를 take로
+    <script>
+      function f4(limit, list) {
+        let acc = 0;
+        let count = 0;
+        for (const a of L.take(
+          limit,
+          L.map(
+            (a) => a * a,
+            L.filter((a) => a % 2, list)
+          )
+        )) {
+          acc += a;
+        }
+        console.log(acc);
+      }
+      f4(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
+    5. 축약 및 합산을 reduce로
+    <script>
+      function f5(limit, list) {
+        console.log(
+          _.reduce(
+            (acc, a) => acc + a,
+            0,
+            L.take(
+              limit,
+              L.map(
+                (a) => a * a,
+                L.filter((a) => a % 2, list)
+              )
+            )
+          )
+        );
+      }
+      f5(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
+    5. 축약 및 합산을 reduce로 - add
+    <script>
+      const add = (a, b) => a + b;
+      function f6(limit, list) {
+        console.log(
+          _.reduce(
+            add,
+            L.take(
+              limit,
+              L.map(
+                (a) => a * a,
+                L.filter((a) => a % 2, list)
+              )
+            )
+          )
+        );
+      }
+      f6(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
+    5. 축약 및 합산을 reduce로 - add - pipe
+    <script>
+      function f7(limit, list) {
+        _.go(
+          list,
+          L.filter((a) => a % 2),
+          L.map((a) => a * a),
+          L.take(limit),
+          _.reduce(add),
+          console.log
+        );
+      }
+      f7(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    </script>
   </body>
 </html>
