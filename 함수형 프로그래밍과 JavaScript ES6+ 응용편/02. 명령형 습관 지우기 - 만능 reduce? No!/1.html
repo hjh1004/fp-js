@@ -63,7 +63,90 @@
         ),
         console.log
       );
+      console.clear();
     </script>
     3. query, queryToObject
+    <script>
+      const obj1 = {
+        a: 1,
+        b: undefined,
+        c: "CC",
+        d: "DD",
+      };
+      // a=1&c=CC&d=DD
+      function query0(obj1) {
+        console.log("🚀 ~ file: 1.html ~ line 78 ~ query1 ~ obj1", obj1);
+        const result = _.reduce(
+          (acc, query) => {
+            console.log(
+              "🚀 ~ file: 1.html ~ line 80 ~ query1 ~ acc, query",
+              acc,
+              query
+            );
+            return query ? `${acc}${query}` : acc;
+          },
+          "",
+          obj1
+        );
+        return result;
+      }
+
+      function query1(obj) {
+        return Object.entries(obj).reduce((query, [k, v], i) => {
+          if (v === undefined) return query;
+          return query + (i > 0 ? "&" : "") + k + "=" + v;
+        }, "");
+      }
+
+      const join = _.curry((sep, iter) =>
+        _.reduce((a, b) => `${a}${sep}${b}`, iter)
+      );
+
+      function query2(obj) {
+        // return _.filter(([k, v]) => v, Object.entries(obj));
+        return join(
+          "&",
+          _.map(
+            ([k, v]) => `${k}=${v}`,
+            _.reject(([_, v]) => !v, Object.entries(obj))
+          )
+        );
+      }
+
+      const query3 = (obj) =>
+        _.go(
+          obj,
+          Object.entries,
+          _.reject(([_, v]) => !v),
+          _.map(join("=")),
+          join("&")
+        );
+
+      const query4 = _.pipe(
+        Object.entries,
+        _.reject(([_, v]) => !v),
+        _.map(join("=")),
+        join("&")
+      );
+      // console.log(query0(obj1));
+      // console.log(query1(obj1));
+      // console.log(query2(obj1));
+      console.log(query4(obj1));
+      console.clear();
+    </script>
+    4. queryToObject
+    <script>
+      const split = _.curry((sep, str) => str.split(sep));
+      const queryToObject = _.pipe(
+        split("&"),
+        _.map(split("=")),
+        _.map(([k, v]) => ({ [k]: v })),
+        _.reduce(Object.assign)
+      );
+      //Object.assign({a:1}, {b:2})
+      //add(10,5)
+
+      console.log(queryToObject("a=1&c=CC&d=DD"));
+    </script>
   </body>
 </html>
