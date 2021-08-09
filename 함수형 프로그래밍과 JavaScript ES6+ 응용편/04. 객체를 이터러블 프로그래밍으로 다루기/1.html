@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>01/1</title>
+    <script src="../../fx.js"></script>
+  </head>
+
+  <body>
+    ## 객체를 이터러블 프로그래밍으로 다루기 1.values
+    <script>
+      const obj1 = {
+        a: 1,
+        b: 2,
+        c: 3,
+        d: 4,
+      };
+
+      console.log(Object.values(obj1));
+
+      L.values = function* (obj) {
+        for (const k in obj) {
+          yield obj[k];
+        }
+      };
+
+      _.go(
+        obj1,
+        L.values,
+        L.map((a) => a + 10),
+        L.take(2),
+        _.reduce((a, b) => a + b),
+        console.log
+      );
+
+      console.clear();
+    </script>
+
+    2.entries
+    <script>
+      L.entires = function* (obj) {
+        for (const k in obj) {
+          yield [k, obj[k]];
+        }
+      };
+
+      _.go(
+        obj1,
+        L.entires,
+        L.filter(([k, v]) => v % 2),
+        _.each(console.log)
+      );
+
+      _.go(
+        obj1,
+        L.entires,
+        L.filter(([k, v]) => v % 2),
+        L.map(([k, v]) => ({ [k]: v })),
+        _.reduce(Object.assign),
+        console.log
+      );
+    </script>
+  </body>
+</html>
